@@ -598,7 +598,12 @@ func (hs *clientHandshakeStateTLS13) establishHandshakeKeys() error {
 		}
 		ecdhePeerData = hs.serverHello.serverShare.data[:x25519PublicKeySize]
 	}
-	sharedKey, err := getSharedKey(ecdhePeerData, hs.keyShareKeys.ecdhe)
+	ecdhe := hs.keyShareKeys.ecdhe
+	if key, ok := hs.keyShareKeys.ecdheFallback[hs.serverHello.serverShare.group]; ok {
+		// The server selected a classical key share sent after the first.
+		ecdhe = key
+	}
+	sharedKey, err := getSharedKey(ecdhePeerData, ecdhe)
 	// [uTLS] SECTION END
 	if err != nil {
 		c.sendAlert(alertIllegalParameter)
