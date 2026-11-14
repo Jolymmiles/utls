@@ -288,7 +288,7 @@ func TestApplyPresetDoesNotMutateOriginalSpec(t *testing.T) {
 }
 
 func TestSecondaryKeyShareSelectedByServer(t *testing.T) {
-	for _, helloID := range []ClientHelloID{HelloFirefox_105, HelloFirefox_120, HelloFirefox_148} {
+	for _, helloID := range []ClientHelloID{HelloFirefox_105, HelloFirefox_120, HelloFirefox_148, HelloFirefox_156} {
 		t.Run(helloID.Str(), func(t *testing.T) {
 			serverConfig := testConfigServer.Clone()
 			serverConfig.CurvePreferences = []CurveID{CurveP256}
