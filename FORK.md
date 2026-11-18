@@ -25,14 +25,15 @@ stays `github.com/refraction-networking/utls`.
   key shares and the GREASE ECH config id, AEAD, enc and payload bytes.
   The preset models a fresh hello only: on a TLS 1.3 resumption Firefox
   drops session_ticket and sends a longer ECH extension (378 and 570
-  bytes in our Firefox 160 and 156 captures), which the preset does not. Two limits on the GREASE
-  ECH, as in `HelloFirefox_148`:
+  bytes in our Firefox 160 and 156 captures), which the preset does not.
+  Two limits on the GREASE ECH, as in `HelloFirefox_148`:
   - its `enc` is a real X25519 public key, so the top bit of its last byte
     is always clear, where NSS writes 32 pseudorandom bytes
     (`tls13_MaybeGreaseEch`);
   - the extension is fixed at 282 bytes. NSS pads the server name to 100
-    bytes and rounds up to 32, so Firefox sends 282 bytes for names up to
-    86 characters and more for longer ones (314 for a 138-character name).
+    bytes and rounds up to 32: Firefox 156 sent 282 bytes for an
+    86-character name and 314 for a 138-character one, and no length
+    between them was measured.
 
   Covered by `TestFirefox156CapturedClientHello`, `TestFirefox156Spec`,
   `TestFirefox156Handshakes` and `TestSecondaryKeyShareSelectedByServer`.

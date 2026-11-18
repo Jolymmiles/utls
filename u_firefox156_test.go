@@ -9,11 +9,13 @@ import (
 	"strings"
 	"testing"
 	"testing/cryptotest"
+
+	icryptotest "github.com/refraction-networking/utls/internal/cryptotest"
 )
 
 // Firefox 156 is what "firefox" parrots: no ECDSA CBC suites or FFDHE
-// groups, and session_ticket and psk_key_exchange_modes, as in Firefox 160
-// captures.
+// groups, and session_ticket and psk_key_exchange_modes, as in the Firefox
+// 156 capture.
 func TestFirefox156Spec(t *testing.T) {
 	if HelloFirefox_Auto != HelloFirefox_156 {
 		t.Fatalf("HelloFirefox_Auto = %s, want Firefox 156", HelloFirefox_Auto.Str())
@@ -80,8 +82,11 @@ func TestFirefox156Handshakes(t *testing.T) {
 // leaves GREASE, padding and pre_shared_key where they were. Every swap
 // index comes from crypto/rand, so a fixed crypto/rand source reproduces
 // the order, and four movable extensions reach all 24 orders about equally
-// often. A shuffle seeded once from crypto/rand, or a rotation, does not.
+// often. A rotation does not; a shuffle seeded once from crypto/rand is
+// what TestShuffleChromeTLSExtensionsDrawsEverySwap catches.
 func TestShuffleChromeTLSExtensionsIsUniform(t *testing.T) {
+	// cryptotest.SetGlobalRandom panics with the v1.0.0 FIPS 140-3 module.
+	icryptotest.MustMinimumFIPS140ModuleVersion(t, "v1.26.0")
 	grease, padding := &UtlsGREASEExtension{}, &UtlsPaddingExtension{}
 	base := []TLSExtension{
 		grease,

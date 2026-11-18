@@ -109,6 +109,12 @@ func TestFirefox156CapturedClientHello(t *testing.T) {
 		if !slices.Equal(got.Ciphers, want.Ciphers) {
 			t.Errorf("cipher suites\n got: %x\nwant: %x", got.Ciphers, want.Ciphers)
 		}
+		if got.Version != want.Version {
+			t.Errorf("legacy version %#04x, want %#04x", got.Version, want.Version)
+		}
+		if !bytes.Equal(got.Compression, want.Compression) {
+			t.Errorf("compression methods %x, want %x", got.Compression, want.Compression)
+		}
 	}
 	if len(record) != len(fixture) {
 		t.Errorf("record of %d bytes, want %d", len(record), len(fixture))
