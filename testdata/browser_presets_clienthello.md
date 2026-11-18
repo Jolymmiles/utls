@@ -3,6 +3,8 @@
 Chrome 157.0.8103.78, Edge 157.0.4341.60, and Firefox 160.0 ran in
 Linux containers against the same local nginx target. The comparison
 used full TLS ClientHellos for `nginx.example.test`.
+The [capture fields](browser_presets_clienthello.json) contain each
+observed cipher suite ID, extension ID, and extension length in wire order.
 
 | Browser | Captured full hellos | Generated uTLS hellos | Comparison |
 | --- | ---: | ---: | --- |
