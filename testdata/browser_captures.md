@@ -20,14 +20,15 @@ are unchanged. Neither keys nor server traffic are kept.
 `u_browser_captures_test.go` builds `HelloFirefox_156` and `HelloEdge_157`
 for the same server name and compares:
 
-- Firefox: cipher suites, extension order, record length, and every
-  extension body except the key shares (group and length only) and the
-  GREASE ECH config id, AEAD (AES-128-GCM or ChaCha20-Poly1305, which NSS
-  picks per hello), enc and payload bytes.
+- Firefox: the record header and length, cipher suites, extension order,
+  and every extension body except the key shares (group and length only)
+  and the GREASE ECH config id, AEAD (AES-128-GCM or ChaCha20-Poly1305,
+  which NSS picks per hello), enc and payload bytes.
 - Edge: cipher suites, the extension multiset with every deterministic body
   (GREASE values, key shares and the GREASE ECH as in
-  `chrome155_clienthello.md`), and GREASE first and last. The order between
-  is shuffled in both.
+  `chrome155_clienthello.md`), the GREASE extensions first and last with
+  their bodies, and the GREASE group that supported_groups and key_share
+  have in common. The order between is shuffled in both.
 
 GREASE values in these captures are as sent. In the 449 fresh and resumed
 Chrome and Edge hellos recorded the same way, the cipher-suite GREASE
