@@ -244,3 +244,27 @@ func TestChrome155CapturedGREASELayout(t *testing.T) {
 		compareGREASELayout(t, fixture, client.HandshakeState.Hello.Raw)
 	})
 }
+
+// HelloSafari_26_3 against a fresh Safari 27.3 hello: the same record
+// header and length, cipher suites, extensions in the same order with the
+// same bodies, and one GREASE group in supported_groups and key_share. GREASE
+// values and key share bytes are free.
+func TestSafari26CapturedClientHello(t *testing.T) {
+	if HelloSafari_Auto != HelloSafari_26_3 {
+		t.Fatalf("HelloSafari_Auto = %s, want %s", HelloSafari_Auto.Str(), HelloSafari_26_3.Str())
+	}
+	fixture := captureFixture(t, "safari27_clienthello.hex")
+	want, _, captured := chrome155ParseWire(t, fixture)
+	record := writtenClientHello(t, HelloSafari_26_3, chrome155FixtureServerName(t, captured))
+	got, _, _ := chrome155ParseWire(t, record)
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("generated ClientHello differs from the Safari 27.3 capture:\n got: %+v\nwant: %+v", got, want)
+	}
+	if gotExts, wantExts := wireExtensions(t, record), wireExtensions(t, fixture); !slices.Equal(gotExts, wantExts) {
+		t.Errorf("extensions in wire order\n got: %q\nwant: %q", gotExts, wantExts)
+	}
+	compareGREASELayout(t, fixture, record)
+	if len(record) != len(fixture) {
+		t.Errorf("record of %d bytes, want %d", len(record), len(fixture))
+	}
+}

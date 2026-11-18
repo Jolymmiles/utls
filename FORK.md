@@ -46,6 +46,14 @@ stays `github.com/refraction-networking/utls`.
   build. Its floor is TLS 1.2, where Edge 85 offered TLS 1.0 and 1.1.
   Covered by `TestEdge157CapturedClientHello` and
   `TestEdge157IsChrome155WithoutTrustAnchors`.
+- `HelloSafari_26_3`, which is `HelloSafari_Auto`, keeps upstream's spec and
+  gains a fixture. Against a fresh Safari 27.3 hello
+  (`testdata/safari27_clienthello.hex`) it matches the record header and
+  length, the cipher suites, and the extensions in order with every body,
+  apart from GREASE values and key share bytes. That is what the fixture
+  shows; no Safari 26.3 capture is kept here to compare the two versions.
+  It rests on one macOS build and loopback servers. Covered by
+  `TestSafari26CapturedClientHello`.
 - `ShuffleChromeTLSExtensions` (`u_parrots.go`) permutes the movable
   extensions uniformly among themselves and draws every swap index from
   `crypto/rand`, as BoringSSL draws an independent value per swap. Upstream
