@@ -19,16 +19,43 @@ stays `github.com/refraction-networking/utls`.
 - `HelloFirefox_156` (`u_common.go`, `u_parrots.go`), which becomes
   `HelloFirefox_Auto`: Firefox dropped the ECDSA CBC suites and FFDHE
   groups of `HelloFirefox_148` and sends session_ticket and
-  psk_key_exchange_modes. The spec matches Firefox 160 captures in cipher
-  suites, extension order, the content of every non-random extension and
-  the hello length. Covered by `TestFirefox156Spec`,
+  psk_key_exchange_modes. Against a fresh Firefox 156.0.1 hello
+  (`testdata/firefox156_clienthello.hex`) it matches the cipher suites, the
+  extension order, the record length and every extension body except the
+  key shares and the GREASE ECH config id, AEAD, enc and payload bytes.
+  The preset models a fresh hello only: on a TLS 1.3 resumption Firefox
+  drops session_ticket and sends a longer ECH extension (378 and 570
+  bytes in our Firefox 160 and 156 captures), which the preset does not. Two limits on the GREASE
+  ECH, as in `HelloFirefox_148`:
+  - its `enc` is a real X25519 public key, so the top bit of its last byte
+    is always clear, where NSS writes 32 pseudorandom bytes
+    (`tls13_MaybeGreaseEch`);
+  - the extension is fixed at 282 bytes. NSS pads the server name to 100
+    bytes and rounds up to 32, so Firefox sends 282 bytes for names up to
+    86 characters and more for longer ones (314 for a 138-character name).
+
+  Covered by `TestFirefox156CapturedClientHello`, `TestFirefox156Spec`,
   `TestFirefox156Handshakes` and `TestSecondaryKeyShareSelectedByServer`.
+- `HelloEdge_157` (`u_common.go`, `u_parrots.go`), which becomes
+  `HelloEdge_Auto` in place of Edge 85: Chrome 155's hello without
+  trust_anchors. Against a fresh Edge 157.0.4341.60 hello
+  (`testdata/edge157_clienthello.hex`) it matches the cipher suites, the
+  extension multiset with every deterministic body, and GREASE first and
+  last; the order between them is shuffled in both. It rests on one Linux
+  build. Its floor is TLS 1.2, where Edge 85 offered TLS 1.0 and 1.1.
+  Covered by `TestEdge157CapturedClientHello` and
+  `TestEdge157IsChrome155WithoutTrustAnchors`.
 - `ShuffleChromeTLSExtensions` (`u_parrots.go`) permutes the movable
-  extensions uniformly among themselves, as BoringSSL does. Upstream skips
-  every swap that touches GREASE, padding or pre_shared_key, so the
-  extensions next to them keep their place twice as often (ALPN first in
-  11% of Chrome hellos against 5.9%). Covered by
-  `TestShuffleChromeTLSExtensionsIsUniform`.
+  extensions uniformly among themselves and draws every swap index from
+  `crypto/rand`, as BoringSSL draws an independent value per swap. Upstream
+  skips every swap that touches GREASE, padding or pre_shared_key, which
+  left each extension in its source slot in about 11% of hellos (SNI first
+  in 11% of Chrome hellos against the uniform 5.9%), and seeds one
+  `math/rand` source per call, which reaches at most 2^31-1 of the 17!
+  orders of Chrome 155's movable extensions. A fixed `crypto/rand` source
+  (`cryptotest.SetGlobalRandom`) still reproduces the order. Covered by
+  `TestShuffleChromeTLSExtensionsIsUniform` and
+  `TestShuffleChromeTLSExtensionsDrawsEverySwap`.
 
 ## Updating
 
