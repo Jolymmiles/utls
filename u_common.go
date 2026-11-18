@@ -603,7 +603,7 @@ var (
 	HelloRandomizedNoALPN = ClientHelloID{helloRandomizedNoALPN, helloAutoVers, nil, nil}
 
 	// The rest will will parrot given browser.
-	HelloFirefox_Auto = HelloFirefox_148
+	HelloFirefox_Auto = HelloFirefox_156
 	HelloFirefox_55   = ClientHelloID{helloFirefox, "55", nil, nil}
 	HelloFirefox_56   = ClientHelloID{helloFirefox, "56", nil, nil}
 	HelloFirefox_63   = ClientHelloID{helloFirefox, "63", nil, nil}
@@ -613,6 +613,7 @@ var (
 	HelloFirefox_105  = ClientHelloID{helloFirefox, "105", nil, nil}
 	HelloFirefox_120  = ClientHelloID{helloFirefox, "120", nil, nil}
 	HelloFirefox_148  = ClientHelloID{helloFirefox, "148", nil, nil}
+	HelloFirefox_156  = ClientHelloID{helloFirefox, "156", nil, nil}
 
 	HelloChrome_Auto        = HelloChrome_155
 	HelloChrome_58          = ClientHelloID{helloChrome, "58", nil, nil}
@@ -658,9 +659,10 @@ var (
 
 	HelloAndroid_11_OkHttp = ClientHelloID{helloAndroid, "11", nil, nil}
 
-	HelloEdge_Auto = HelloEdge_85 // HelloEdge_106 seems to be incompatible with this library
+	HelloEdge_Auto = HelloEdge_157
 	HelloEdge_85   = ClientHelloID{helloEdge, "85", nil, nil}
 	HelloEdge_106  = ClientHelloID{helloEdge, "106", nil, nil}
+	HelloEdge_157  = ClientHelloID{helloEdge, "157", nil, nil}
 
 	HelloSafari_Auto = HelloSafari_26_3
 	HelloSafari_16_0 = ClientHelloID{helloSafari, "16.0", nil, nil}
